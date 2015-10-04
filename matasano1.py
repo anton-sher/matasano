@@ -67,7 +67,7 @@ def guess_xor_key(s):
             pass
     return k_min
 
-def solve_1_3():
+def solve_3():
     cyphertext = bytes.decode(hex2byte('1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736'), 'ascii')
     print('cyphertext is', cyphertext)
     k = guess_xor_key(cyphertext)
