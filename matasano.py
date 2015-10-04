@@ -69,8 +69,13 @@ def guess_xor_key(s):
 
 def solve_3():
     cyphertext = bytes.decode(hex2byte('1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736'), 'ascii')
-    print('cyphertext is', cyphertext)
+    print('cyphertext:', cyphertext)
     k = guess_xor_key(cyphertext)
-    print('key is', k)
-    print('plaintext is', single_byte_xor(cyphertext, k))
+    print('key:', k)
+    print('plaintext:', single_byte_xor(cyphertext, k))
 
+def solve_4():
+    with open('data/4.txt') as f:
+        lines = f.read().splitlines()
+    for line in lines:
+        pass
