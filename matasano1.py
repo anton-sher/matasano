@@ -1,9 +1,5 @@
-#/usr/bin/env python3
-
-s1_c1_in = '49276d206b696c6c696e6720796f757220627261696e206c696b65206120706f69736f6e6f7573206d757368726f6f6d'
-s1_c1_out = 'SSdtIGtpbGxpbmcgeW91ciBicmFpbiBsaWtlIGEgcG9pc29ub3VzIG11c2hyb29t'
-
 import base64
+import math
 
 def hex2byte(hx):
     return bytes([int(hx[i*2:i*2 + 2], base=16) for i in range(0, len(hx) // 2)])
@@ -16,4 +12,45 @@ def hex2base64(hx):
 
 def xor(a, b):
     return bytes([z[0] ^ z[1] for z in zip(a, b)])
+
+# Challenge 3: cracking single-byte XOR
+def single_byte_xor(s, c):
+    return bytes.decode(xor(str.encode(s), bytes([c]) * len(s)))
+
+def char_occurrences(s):
+    occur = {}
+    for c in s:
+        if c in occur:
+            occur[c] = occur[c] + 1
+        else:
+            occur[c] = 1
+    return occur
+
+def char_frequencies(s):
+    occur = char_occurrences(s)
+    s = sum(occur.values())
+    freq = {}
+    for k in occur:
+        freq[k] = occur[k] / s
+    return freq
+
+ref_frequencies = char_frequencies('''
+We can't introduce these any better than Maciej Ceglowski did, so read that blog post first.
+
+We've built a collection of 48 exercises that demonstrate attacks on real-world crypto.
+
+This is a different way to learn about crypto than taking a class or reading a book. We give you problems to solve. They're derived from weaknesses in real-world systems and modern cryptographic constructions. We give you enough info to learn about the underlying crypto concepts yourself. When you're finished, you'll not only have learned a good deal about how cryptosystems are built, but you'll also understand how they're attacked.
+''')
+
+def diff_frequencies(f1, f2):
+    keys = set(f1) | set(f2)
+    s = 0
+    for key in keys:
+        d = 0
+        if key in f1:
+            d += f1[key]
+        if key in f2:
+            d -= f2[key]
+        s += d * d
+    return math.sqrt(s)
 
