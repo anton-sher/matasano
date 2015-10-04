@@ -8,14 +8,14 @@ def byte2hex(b):
     return ''.join(format(i, '02x') for i in b)
 
 def hex2base64(hx):
-    return bytes.decode(base64.b64encode(hex2byte(hx)))
+    return bytes.decode(base64.b64encode(hex2byte(hx)), 'ascii')
 
 def xor(a, b):
     return bytes([z[0] ^ z[1] for z in zip(a, b)])
 
 # Challenge 3: cracking single-byte XOR
 def single_byte_xor(s, c):
-    return bytes.decode(xor(str.encode(s), bytes([c]) * len(s)))
+    return bytes.decode(xor(str.encode(s), bytes([c]) * len(s)), 'ascii')
 
 def char_occurrences(s):
     occur = {}
@@ -53,4 +53,24 @@ def diff_frequencies(f1, f2):
             d -= f2[key]
         s += d * d
     return math.sqrt(s)
+
+def guess_xor_key(s):
+    k_min = 0
+    d_min = 0
+    for k in range(1, 255):
+        try:
+            d = diff_frequencies(ref_frequencies, char_frequencies(single_byte_xor(s, k)))
+            if k_min == 0 or d < d_min:
+                k_min = k
+                d_min = d
+        except:
+            pass
+    return k_min
+
+def solve_1_3():
+    cyphertext = bytes.decode(hex2byte('1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736'), 'ascii')
+    print('cyphertext is', cyphertext)
+    k = guess_xor_key(cyphertext)
+    print('key is', k)
+    print('plaintext is', single_byte_xor(cyphertext, k))
 
